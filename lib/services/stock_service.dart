@@ -11,7 +11,7 @@ class StockService {
 
   // ---------------- 单号生成 ----------------
 
-  Future<String> _nextNo(Database tx, String prefix) async {
+  Future<String> _nextNo(DatabaseExecutor tx, String prefix) async {
     final now = DateTime.now();
     final stamp =
         '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}'
@@ -138,7 +138,7 @@ class StockService {
   }
 
   /// 商品在某仓库的可用库存总量
-  Future<double> availableQty(Database tx, int productId, int warehouseId) async {
+  Future<double> availableQty(DatabaseExecutor tx, int productId, int warehouseId) async {
     final rows = await tx.query('stock',
         columns: ['SUM(quantity) AS q'],
         where: 'product_id=? AND warehouse_id=?',
@@ -148,7 +148,7 @@ class StockService {
   }
 
   /// 商品全仓库总量
-  Future<double> totalQtyAll(Database tx, int productId) async {
+  Future<double> totalQtyAll(DatabaseExecutor tx, int productId) async {
     final rows = await tx.query('stock', columns: ['SUM(quantity) AS q'], where: 'product_id=?', whereArgs: [productId]);
     final v = rows.first['q'] as num?;
     return v?.toDouble() ?? 0;
@@ -156,7 +156,7 @@ class StockService {
 
   // ---------------- 库存行原子增减 ----------------
 
-  Future<void> _changeStock(Database tx, StockInItem e, int warehouseId, double delta) async {
+  Future<void> _changeStock(DatabaseExecutor tx, StockInItem e, int warehouseId, double delta) async {
     final rows = await tx.query('stock',
         where: 'product_id=? AND warehouse_id=? AND IFNULL(location_id,-1)=? AND IFNULL(batch_no,"")=?',
         whereArgs: [e.productId, warehouseId, e.locationId ?? -1, e.batchNo ?? ''],
@@ -352,7 +352,7 @@ class StockService {
   }
 
   /// 按 FIFO 依次扣减库存行，返回剩余未扣数量
-  Future<double> _deductRows(Database tx, List<Map<String, Object?>> rows, double remain, int warehouseId) async {
+  Future<double> _deductRows(DatabaseExecutor tx, List<Map<String, Object?>> rows, double remain, int warehouseId) async {
     final now = DateTime.now().millisecondsSinceEpoch;
     for (final r in rows) {
       if (remain <= 1e-9) break;
@@ -476,7 +476,7 @@ class StockService {
     });
   }
 
-  Future<TransferOrder> _transferOrThrow(Database tx, int id, {required int expectStatus}) async {
+  Future<TransferOrder> _transferOrThrow(DatabaseExecutor tx, int id, {required int expectStatus}) async {
     final rows = await tx.query('transfer_order', where: 'id=?', whereArgs: [id], limit: 1);
     if (rows.isEmpty) throw Exception('调拨单不存在');
     final order = TransferOrder.fromMap(rows.first);
@@ -485,7 +485,7 @@ class StockService {
     return order;
   }
 
-  Future<List<TransferItem>> _transferItems(Database tx, int orderId) async {
+  Future<List<TransferItem>> _transferItems(DatabaseExecutor tx, int orderId) async {
     final rows = await tx.query('transfer_item', where: 'order_id=?', whereArgs: [orderId]);
     return rows.map(TransferItem.fromMap).toList();
   }
@@ -628,7 +628,7 @@ class StockService {
         if (diff.abs() > 1e-9) {
           diffSku++;
           await _changeStock(tx, StockInItem(
-              productId: it.productId, locationId: it.locationId, batchNo: it.batchNo),
+              productId: it.productId, quantity: 0, locationId: it.locationId, batchNo: it.batchNo),
               order.warehouseId, diff);
           if (diff > 0) {
             gains.add(StockInItem(productId: it.productId, quantity: diff));

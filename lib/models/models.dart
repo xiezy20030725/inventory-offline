@@ -616,6 +616,7 @@ class CheckOrder {
   int createTime;
   int? finishTime;
   String? warehouseName;
+  List<CheckItem> items;
 
   CheckOrder({
     this.id,
@@ -630,6 +631,7 @@ class CheckOrder {
     required this.createTime,
     this.finishTime,
     this.warehouseName,
+    this.items = const [],
   });
 
   factory CheckOrder.fromMap(Map<String, dynamic> m) => CheckOrder(

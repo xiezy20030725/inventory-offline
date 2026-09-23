@@ -272,7 +272,7 @@ class AppDatabase {
       orderType: 1, warehouseId: wA, supplier: '华东五金供应',
       totalNum: 2350, totalAmount: 2984, status: 1, createTime: t, confirmTime: t,
       items: [
-        StockInItem(productId: idBolt, quantity: 2330, price: 0.8, amount: 1864, batch: 'B2026-02'),
+        StockInItem(productId: idBolt, quantity: 2330, price: 0.8, amount: 1864, batchNo: 'B2026-02'),
         StockInItem(productId: idBearing, quantity: 20, price: 56, amount: 1120),
       ]);
     final inId = await db.insert('stock_in_order', inOrder.toMap());
@@ -285,7 +285,7 @@ class AppDatabase {
       orderNo: 'OUT${day0.millisecondsSinceEpoch.toString().substring(4)}0001',
       orderType: 1, warehouseId: wA, customer: '城东机电门店',
       totalNum: 1280, totalAmount: 1216, status: 1, createTime: t, confirmTime: t,
-      items: [StockOutItem(productId: idBolt, quantity: 1280, price: 0.95, amount: 1216, batch: 'B2026-01')]);
+      items: [StockOutItem(productId: idBolt, quantity: 1280, price: 0.95, amount: 1216, batchNo: 'B2026-01')]);
     final outId = await db.insert('stock_out_order', outOrder.toMap());
     for (final it in outOrder.items) {
       await db.insert('stock_out_item', (it..orderId = outId).toMap());
