@@ -1,0 +1,44 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Create Android platform files
+        run: flutter create . --platforms=android --project-name inventory_offline
+
+      - name: Localize app label
+        run: |
+          sed -i 's/android:label="inventory_offline"/android:label="离线库存管理"/' android/app/src/main/AndroidManifest.xml || true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-offline-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
