@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../models/models.dart';
 import '../../services/stock_service.dart';
 import '../../state/app_state.dart';
 import '../../theme.dart';

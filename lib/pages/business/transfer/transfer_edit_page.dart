@@ -48,7 +48,7 @@ class _TransferEditPageState extends State<TransferEditPage> {
     final product = await _svc.productByBarcode(code);
     if (!mounted) return;
     if (product == null) return toast(context, '条码未建档：$code');
-    _itemDialog(TransferItem(productId: product.id!, product: product));
+    _itemDialog(TransferItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _addByPick() async {
@@ -62,7 +62,7 @@ class _TransferEditPageState extends State<TransferEditPage> {
         child: _ProductPicker(onPick: (p) => Navigator.pop(c, p)),
       ),
     );
-    if (product != null) _itemDialog(TransferItem(productId: product.id!, product: product));
+    if (product != null) _itemDialog(TransferItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _itemDialog(TransferItem item) async {

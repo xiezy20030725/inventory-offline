@@ -74,7 +74,7 @@ class _StockInEditPageState extends State<StockInEditPage> {
       toast(context, '条码未建档：$code');
       return;
     }
-    _itemDialog(StockInItem(productId: product.id!, product: product));
+    _itemDialog(StockInItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _addByPick() async {
@@ -88,7 +88,7 @@ class _StockInEditPageState extends State<StockInEditPage> {
         child: _ProductPicker(onPick: (p) => Navigator.pop(c, p)),
       ),
     );
-    if (product != null) _itemDialog(StockInItem(productId: product.id!, product: product));
+    if (product != null) _itemDialog(StockInItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _itemDialog(StockInItem item) async {

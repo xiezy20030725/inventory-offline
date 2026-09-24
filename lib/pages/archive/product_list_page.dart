@@ -42,7 +42,7 @@ class _ProductListPageState extends State<ProductListPage> {
     final rows = await _svc.queryStock(state.currentWarehouseId);
     _stockMap = {};
     for (final r in rows) {
-      _stockMap[r.product.id] = (_stockMap[r.product.id] ?? 0) + r.stock.quantity;
+      _stockMap[r.product.id!] = (_stockMap[r.product.id] ?? 0) + r.stock.quantity;
     }
     if (mounted) setState(() {});
   }

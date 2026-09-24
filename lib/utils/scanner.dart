@@ -72,7 +72,7 @@ class _ScannerPageState extends State<ScannerPage> {
             formats: const [BarcodeFormat.ean13, BarcodeFormat.ean8, BarcodeFormat.code128, BarcodeFormat.qrCode],
           ),
           onDetect: _onDetect,
-          errorBuilder: (c, error) => Center(
+          errorBuilder: (c, error, _) => Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               const Icon(Icons.camera_alt_outlined, color: Colors.white38, size: 60),
               const SizedBox(height: 12),

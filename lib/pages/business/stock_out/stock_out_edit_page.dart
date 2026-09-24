@@ -53,7 +53,7 @@ class _StockOutEditPageState extends State<StockOutEditPage> {
     final product = await _svc.productByBarcode(code);
     if (!mounted) return;
     if (product == null) return toast(context, '条码未建档：$code');
-    _itemDialog(StockOutItem(productId: product.id!, product: product));
+    _itemDialog(StockOutItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _addByPick() async {
@@ -67,7 +67,7 @@ class _StockOutEditPageState extends State<StockOutEditPage> {
         child: _ProductPicker(onPick: (p) => Navigator.pop(c, p)),
       ),
     );
-    if (product != null) _itemDialog(StockOutItem(productId: product.id!, product: product));
+    if (product != null) _itemDialog(StockOutItem(productId: product.id!, quantity: 0, product: product));
   }
 
   Future<void> _itemDialog(StockOutItem item) async {
